@@ -1,0 +1,37 @@
+version: '3.8'
+
+services:
+  auth-service:
+    build: ./services/auth-service
+    ports:
+      - "5000:5000"
+    environment:
+      - DB_HOST=sqlserver
+      - DB_USER=sa
+      - DB_PASS=your_password
+
+  crypto-service:
+    build: ./services/crypto-service
+    ports:
+      - "5001:5001"
+
+  currency-service:
+    build: ./services/currency-service
+    ports:
+      - "5002:5002"
+      
+  frontend:
+    build: ./services/frontend
+    ports:
+      - "3000:3000"
+
+  sqlserver:
+    image: mcr.microsoft.com/mssql/server
+    container_name: sqlserver
+    environment:
+      SA_PASSWORD: "your_password"
+      ACCEPT_EULA: "Y"
+    ports:
+      - "1433:1433"
+    volumes:
+      - ./config/db/init.sql:/docker-entrypoint-initdb.d/init.sql
