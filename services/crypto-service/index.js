@@ -3,7 +3,7 @@ const axios = require('axios');
 require('dotenv').config();
 
 const app = express();
-const port = 5001;
+const porta = 5001;
 
 // Endpoint para converter criptomoedas
 app.get('/convert', async (req, res) => {
@@ -33,6 +33,6 @@ app.get('/convert', async (req, res) => {
     }
 });
 
-app.listen(port, () => {
-    console.log(`Crypto service running on port ${port}`);
+app.listen(porta, () => {
+    console.log(`Crypto service rodando na porta ${porta}`);
 });

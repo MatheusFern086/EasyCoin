@@ -3,7 +3,7 @@ const axios = require('axios');
 require('dotenv').config();
 
 const app = express();
-const port = 5002;
+const porta = 5002;
 
 // Endpoint para converter moedas tradicionais
 app.get('/convert', async (req, res) => {
@@ -33,6 +33,6 @@ app.get('/convert', async (req, res) => {
     }
 });
 
-app.listen(port, () => {
-    console.log(`Currency service running on port ${port}`);
+app.listen(porta, () => {
+    console.log(`Currency service rodando na porta ${porta}`);
 });
