@@ -15,6 +15,8 @@
     "@testing-library/user-event": "^13.5.0",
     "axios": "^1.7.3",
     "frontend": "file:",
+    "fs": "^0.0.1-security",
+    "path": "^0.12.7",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-router-dom": "^6.26.0",

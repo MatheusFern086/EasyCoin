@@ -1,12 +1,13 @@
 import React, { useState } from 'react';
 import axios from 'axios';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import './Login.css';
 import logo from '../assets/EasyCoinN.png';
 
 const Login = ({ setToken }) => {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
+    const navigate = useNavigate();
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -15,7 +16,9 @@ const Login = ({ setToken }) => {
                 username,
                 password,
             });
+            console.error('aqui');
             setToken(response.headers['authorization']);
+            navigate('/home');
         } catch (error) {
             console.error('Senha inválida');
         }
