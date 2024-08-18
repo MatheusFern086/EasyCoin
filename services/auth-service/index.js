@@ -3,9 +3,11 @@ const bodyParser = require('body-parser');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
 const sql = require('mssql');
+const cors = require('cors');
 
 const app = express();
 app.use(bodyParser.json());
+app.use(cors()); 
 
 // Configurações de conexão ao banco de dados
 const config = {
