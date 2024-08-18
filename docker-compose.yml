@@ -5,10 +5,12 @@ services:
     build: ./services/auth-service
     ports:
       - "5000:5000"
+    depends_on:
+      - sqlserver
     environment:
       - DB_HOST=sqlserver
       - DB_USER=sa
-      - DB_PASS=your_password
+      - DB_PASS=#zyZ6GO5PgudiBxt
 
   crypto-service:
     build: ./services/crypto-service
