@@ -16,20 +16,19 @@ const Login = ({ setToken }) => {
                 username,
                 password,
             });
-            console.error('aqui');
+            localStorage.setItem('token', response.headers['authorization']);
             setToken(response.headers['authorization']);
             navigate('/home');
         } catch (error) {
-            console.error('Senha inválida');
+            console.error('Senha inválida', error);
         }
     };
 
     return (
         <div className="login-container">
-            
             <form onSubmit={handleSubmit}>
-            <img src={logo} alt="Logo" className="login-logo" />
-            <h1>Login</h1>
+                <img src={logo} alt="Logo" className="login-logo" />
+                <h1>Login</h1>
                 <input
                     type="text"
                     placeholder="Usuário"

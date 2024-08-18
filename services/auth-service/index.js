@@ -81,7 +81,7 @@ app.get('/test-db', async (req, res) => {
 // Rota de registro de usuário
 app.post('/register', async (req, res) => {
     const { username, password } = req.body;
-    const hashedPassword = await bcrypt.hash(password, 10);
+    const hashedPassword = await bcrypt.hash(password, 10); 
 
     try {
         await sql.connect(config);
@@ -101,17 +101,16 @@ app.post('/login', async (req, res) => {
         const result = await sql.query`SELECT * FROM Users WHERE username = ${username}`;
         const user = result.recordset[0];
 
-        console.log('Validando senha');
+        console.log('Verificando senha')
         if (!user || !(await bcrypt.compare(password, user.password))) {
-            console.log('Senha incorreta');
+            console.log('Senha invalida')
             return res.status(400).send('Invalid Credentials');
         }
 
         const token = jwt.sign({ id: user.id }, 'your_jwt_secret');
-        res.header('Authorization', token).send('Logado');
-        console.log('Logado');
+        res.header('Authorization', token).send('Logado'); // Envia o token no cabeçalho
+        console.log('Logado')
     } catch (err) {
-        console.log('Erro' + err);
         console.error('Erro base de dados:', err);
         res.status(500).send('Server Error');
     }
