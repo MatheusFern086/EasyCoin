@@ -28,7 +28,6 @@ const initializeDatabase = async () => {
     try {
         const pool = await sql.connect(config);
 
-        // Verificar se o banco de dados existe
         const result = await pool.request().query(`
             IF NOT EXISTS (SELECT name FROM sys.databases WHERE name = 'ProjetoTopicos')
             BEGIN
@@ -37,14 +36,11 @@ const initializeDatabase = async () => {
         `);
         console.log('Banco de dados verificado/criado com sucesso.');
 
-        // Conectar ao banco de dados recém-criado e criar tabelas
         await sql.connect({ ...config, database: 'ProjetoTopicos' });
         
-        // Caminho para o script de criação das tabelas
         const scriptPath = path.join(__dirname, 'setup.sql');
         const script = fs.readFileSync(scriptPath, 'utf8');
 
-        // Executar o script de criação das tabelas
         await pool.request().query(script);
         console.log('Tabelas criadas com sucesso.');
         
@@ -89,7 +85,36 @@ app.post('/register', async (req, res) => {
         res.status(201).send('Usuário registrado');
     } catch (err) {
         console.error('Database error:', err);
-        res.status(500).send('Erro ao cadastrar');
+        res.status(500).send('Erro ao registar usuário');
+    }
+});
+
+//Rota de exclusão de usuário
+app.post('/delete', async (req, res) => {
+    const { id } = req.body; 
+
+    try {
+        await sql.connect(config);
+        const result = await sql.query`DELETE FROM Users WHERE id = ${id}`;
+        res.status(201).send('Usuário excluído com sucesso');
+    } catch (err) {
+        console.error('Database error:', err);
+        res.status(500).send('Erro ao excluir usuário');
+    }
+});
+
+//Rota de alteração de usuário
+app.post('/update', async (req, res) => {
+    const { id, username, password } = req.body;
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    try {
+        await sql.connect(config);
+        const result = await sql.query`UPDATE Users SET username = ${username}, password = ${password} WHERE id = ${id}`;
+        res.status(201).send('Usuário alterado com sucesso');
+    } catch (err) {
+        console.error('Database error:', err);
+        res.status(500).send('Erro ao alterar usuário');
     }
 });
 
