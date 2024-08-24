@@ -10,24 +10,45 @@ const Home = ({ token }) => {
     const [convertedAmount, setConvertedAmount] = useState(null);
 
     useEffect(() => {
+
+        console.log('Token recebido na Home:', token);
+
         const fetchCurrencies = async () => {
-            const response = await axios.get('https://api.exchangeratesapi.io/latest');
-            setCurrencies(Object.keys(response.data.rates));
+            try {
+                const response = await axios.get('https://api.exchangeratesapi.io/latest', {
+                    headers: { Authorization: `Bearer ${token}` },
+                });
+                setCurrencies(Object.keys(response.data.rates));
+            } catch (error) {
+                console.error('Erro ao buscar moedas:', error);
+            }
         };
 
         const fetchCryptoCurrencies = async () => {
-            const response = await axios.get('https://api.coingecko.com/api/v3/coins/list');
-            setCryptoCurrencies(response.data.map(coin => coin.id));
+            try {
+                const response = await axios.get('https://api.coingecko.com/api/v3/coins/list', {
+                    headers: { Authorization: `Bearer ${token}` },
+                });
+                setCryptoCurrencies(response.data.map(coin => coin.id));
+            } catch (error) {
+                console.error('Erro ao buscar criptomoedas:', error);
+            }
         };
 
         fetchCurrencies();
         fetchCryptoCurrencies();
-    }, []);
+    }, [token]);
 
     const handleConvert = async () => {
-        const response = await axios.get(`https://api.exchangeratesapi.io/latest?base=${selectedCurrency}`);
-        const rate = response.data.rates[selectedCrypto.toUpperCase()];
-        setConvertedAmount(rate);
+        try {
+            const response = await axios.get(`https://api.exchangeratesapi.io/latest?base=${selectedCurrency}`, {
+                headers: { Authorization: `Bearer ${token}` },
+            });
+            const rate = response.data.rates[selectedCrypto.toUpperCase()];
+            setConvertedAmount(rate);
+        } catch (error) {
+            console.error('Erro ao converter moeda:', error);
+        }
     };
 
     return (
@@ -41,7 +62,7 @@ const Home = ({ token }) => {
             </select>
 
             <select onChange={(e) => setSelectedCrypto(e.target.value)}>
-                <option value="">Selecione uma Cryptomoeda</option>
+                <option value="">Selecione uma Criptomoeda</option>
                 {cryptoCurrencies.map((crypto) => (
                     <option key={crypto} value={crypto}>{crypto}</option>
                 ))}

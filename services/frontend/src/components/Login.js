@@ -16,11 +16,17 @@ const Login = ({ setToken }) => {
                 username,
                 password,
             });
-            localStorage.setItem('token', response.headers['authorization']);
-            setToken(response.headers['authorization']);
-            navigate('/home');
+            const { token } = response.data; // Obtém o token do corpo da resposta
+            
+            console.log('Token recebido:', token); // Verifica se o token foi recebido
+            localStorage.setItem('token', token);
+            setToken(token);
+    
+            console.log('Token armazenado e estado atualizado');
+            navigate('/home'); 
+            console.log('Redirecionando para a Home');
         } catch (error) {
-            console.error('Senha inválida', error);
+            console.error('Erro de login:', error);
         }
     };
 

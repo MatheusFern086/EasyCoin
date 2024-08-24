@@ -6,10 +6,11 @@ const sql = require('mssql');
 const cors = require('cors');
 const fs = require('fs');
 const path = require('path');
-
+require('dotenv').config();
 const app = express();
 app.use(bodyParser.json());
 app.use(cors()); 
+const secretKey = process.env.JWT_SECRET;
 
 // Configurações de conexão ao banco de dados
 const config = {
@@ -132,9 +133,10 @@ app.post('/login', async (req, res) => {
             return res.status(400).send('Invalid Credentials');
         }
 
-        const token = jwt.sign({ id: user.id }, 'your_jwt_secret');
-        res.header('Authorization', token).send('Logado'); // Envia o token no cabeçalho
-        console.log('Logado')
+        const token = jwt.sign({ id: user.id }, secretKey);
+        res.json({ token });// Envia o token no cabeçalho
+        console.log('Logado');
+        console.log('Token: ' + token);
     } catch (err) {
         console.error('Erro base de dados:', err);
         res.status(500).send('Server Error');
