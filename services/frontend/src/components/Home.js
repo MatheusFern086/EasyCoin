@@ -1,78 +1,111 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import './Home.css';
+import logo from '../assets/EasyCoinN.png';
+import { Link } from 'react-router-dom';
 
 const Home = ({ token }) => {
+    const [plan, setPlan] = useState(null);
     const [currencies, setCurrencies] = useState([]);
     const [cryptoCurrencies, setCryptoCurrencies] = useState([]);
     const [selectedCurrency, setSelectedCurrency] = useState('');
     const [selectedCrypto, setSelectedCrypto] = useState('');
+    const [amount, setAmount] = useState('');
     const [convertedAmount, setConvertedAmount] = useState(null);
 
     useEffect(() => {
-
-        console.log('Token recebido na Home:', token);
+        const fetchUserPlan = async () => {
+            try {
+                const response = await axios.get('http://localhost:5000/plan', {
+                    headers: { Authorization: `Bearer ${token}` }
+                });
+                setPlan(response.data.plan); // Assume que o backend retorna { plan: "Free" | "Pro" }
+            } catch (error) {
+                console.error('Erro ao buscar o plano do usuário:', error);
+            }
+        };
 
         const fetchCurrencies = async () => {
             try {
-                const response = await axios.get('https://api.exchangeratesapi.io/latest', {
-                    headers: { Authorization: `Bearer ${token}` },
-                });
-                setCurrencies(Object.keys(response.data.rates));
+                const response = await axios.get('https://api.exchangeratesapi.io/latest');
+                if (response.data && response.data.rates) {
+                    setCurrencies(Object.keys(response.data.rates));
+                } else {
+                    console.error('A resposta da API não contém os dados esperados.');
+                }
             } catch (error) {
-                console.error('Erro ao buscar moedas:', error);
+                console.error('Erro ao buscar as moedas:', error);
             }
         };
 
         const fetchCryptoCurrencies = async () => {
             try {
-                const response = await axios.get('https://api.coingecko.com/api/v3/coins/list', {
-                    headers: { Authorization: `Bearer ${token}` },
-                });
-                setCryptoCurrencies(response.data.map(coin => coin.id));
+                const response = await axios.get('https://api.coingecko.com/api/v3/coins/list');
+                if (response.data) {
+                    setCryptoCurrencies(response.data.map(coin => coin.id));
+                } else {
+                    console.error('A resposta da API não contém os dados esperados.');
+                }
             } catch (error) {
-                console.error('Erro ao buscar criptomoedas:', error);
+                console.error('Erro ao buscar as cryptomoedas:', error);
             }
         };
 
+        fetchUserPlan();
         fetchCurrencies();
         fetchCryptoCurrencies();
     }, [token]);
 
     const handleConvert = async () => {
         try {
-            const response = await axios.get(`https://api.exchangeratesapi.io/latest?base=${selectedCurrency}`, {
-                headers: { Authorization: `Bearer ${token}` },
-            });
+            const response = await axios.get(`https://api.exchangeratesapi.io/latest?base=${selectedCurrency}`);
             const rate = response.data.rates[selectedCrypto.toUpperCase()];
-            setConvertedAmount(rate);
+            setConvertedAmount(rate * amount);
         } catch (error) {
-            console.error('Erro ao converter moeda:', error);
+            console.error('Erro ao converter:', error);
         }
     };
 
+    if (!plan) {
+        return <div>Carregando...</div>;
+    }
+
     return (
         <div className="home-container">
-            <h1>Conversor de Moedas</h1>
-            <select onChange={(e) => setSelectedCurrency(e.target.value)}>
-                <option value="">Selecione uma Moeda</option>
-                {currencies.map((currency) => (
-                    <option key={currency} value={currency}>{currency}</option>
-                ))}
-            </select>
+            <div className="converter-box">
+                <img src={logo} alt="EasyCoin Logo" className="logo" />
+                <h1>Conversor de Moedas</h1>
+                <p>Conversões restantes: {plan === 'Free' ? '3' : '∞'}</p>
+                <select onChange={(e) => setSelectedCurrency(e.target.value)} className="input-field">
+                    <option value="">Selecione uma Moeda</option>
+                    {currencies.map((currency) => (
+                        <option key={currency} value={currency}>{currency}</option>
+                    ))}
+                </select>
 
-            <select onChange={(e) => setSelectedCrypto(e.target.value)}>
-                <option value="">Selecione uma Criptomoeda</option>
-                {cryptoCurrencies.map((crypto) => (
-                    <option key={crypto} value={crypto}>{crypto}</option>
-                ))}
-            </select>
+                <select onChange={(e) => setSelectedCrypto(e.target.value)} className="input-field">
+                    <option value="">Selecione uma Cryptomoeda</option>
+                    {cryptoCurrencies.map((crypto) => (
+                        <option key={crypto} value={crypto}>{crypto}</option>
+                    ))}
+                </select>
 
-            <button onClick={handleConvert}>Converter</button>
+                <input 
+                    type="number" 
+                    placeholder="Digite o valor a ser convertido" 
+                    value={amount} 
+                    onChange={(e) => setAmount(e.target.value)} 
+                    className="input-field" 
+                />
 
-            {convertedAmount && (
-                <p>Valor Convertido: {convertedAmount}</p>
-            )}
+                <div className="converted-amount">
+                    {convertedAmount !== null && <p>Valor Convertido: {convertedAmount.toFixed(2)}</p>}
+                </div>
+
+                <button onClick={handleConvert} className="convert-button">Converter</button>
+
+                {plan === 'Free' && <p> <Link to="/plano" className="plan-link" >Seja Pro e Converta ilimitadamente</Link></p>}
+            </div>
         </div>
     );
 };

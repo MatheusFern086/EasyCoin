@@ -23,7 +23,7 @@ const Login = ({ setToken }) => {
             setToken(token);
     
             console.log('Token armazenado e estado atualizado');
-            navigate('/home'); 
+            navigate('/home', token); 
             console.log('Redirecionando para a Home');
         } catch (error) {
             console.error('Erro de login:', error);
