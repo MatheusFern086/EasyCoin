@@ -2,9 +2,10 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import './Home.css';
 import logo from '../assets/EasyCoinN.png';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 const Home = ({ token }) => {
+    const navigate = useNavigate();
     const [plan, setPlan] = useState(null);
     const [currencies, setCurrencies] = useState([]);
     const [cryptoCurrencies, setCryptoCurrencies] = useState([]);
@@ -14,6 +15,7 @@ const Home = ({ token }) => {
     const [convertedAmount, setConvertedAmount] = useState(null);
 
     useEffect(() => {
+
         const fetchUserPlan = async () => {
             try {
                 const response = await axios.get('http://localhost:5000/plan', {
@@ -65,6 +67,11 @@ const Home = ({ token }) => {
             console.error('Erro ao converter:', error);
         }
     };
+    
+    const handleLogout = () => {
+        localStorage.removeItem('token');
+        navigate('/login');
+    };
 
     if (!plan) {
         return <div>Carregando...</div>;
@@ -72,7 +79,7 @@ const Home = ({ token }) => {
 
     return (
         <div className="home-container">
-            <div className="converter-box">
+            <div>
                 <img src={logo} alt="EasyCoin Logo" className="logo" />
                 <h1>Conversor de Moedas</h1>
                 <p>Conversões restantes: {plan === 'Free' ? '3' : '∞'}</p>
@@ -103,6 +110,7 @@ const Home = ({ token }) => {
                 </div>
 
                 <button onClick={handleConvert} className="convert-button">Converter</button>
+                <button onClick={handleLogout} className="convert-button">Sair</button>
 
                 {plan === 'Free' && <p> <Link to="/plano" className="plan-link" >Seja Pro e Converta ilimitadamente</Link></p>}
             </div>
