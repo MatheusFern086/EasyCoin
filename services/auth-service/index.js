@@ -13,10 +13,10 @@ app.use(cors());
 const secretKey = process.env.JWT_SECRET;
 
 const config = {
-    user: 'sa',
-    password: '#zyZ6GO5PgudiBxt',
-    server: 'sqlserver',
-    database: 'ProjetoTopicos',
+    user: process.env.DB_USER,
+    password: process.env.DB_PASSWORD,
+    server: process.env.DB_SERVER,
+    database: process.env.DB_NAME,
     options: {
         encrypt: true,
         enableArithAbort: true,
@@ -107,30 +107,6 @@ app.post('/update', async (req, res) => {
     }
 });
 
-/*app.post('/login', async (req, res) => {
-    const { username, password } = req.body;
-
-    try {
-        await sql.connect(config);
-        const result = await sql.query`SELECT * FROM Users WHERE username = ${username}`;
-        const user = result.recordset[0];
-
-        console.log('Verificando senha')
-        if (!user || !(await bcrypt.compare(password, user.password))) {
-            console.log('Senha invalida')
-            return res.status(400).send('Invalid Credentials');
-        }
-
-        const token = jwt.sign({ id: user.id }, secretKey);
-        res.json({ token });// Envia o token no cabeçalho
-        console.log('Logado');
-        console.log('Token: ' + token);
-    } catch (err) {
-        console.error('Erro base de dados:', err);
-        res.status(500).send('Server Error');
-    }
-});*/
-
 app.post('/login', async (req, res) => {
     const { username, password } = req.body;
 
@@ -146,10 +122,6 @@ app.post('/login', async (req, res) => {
         if (!user || !(await bcrypt.compare(password, user.password))) {
             return res.status(400).json({ message: 'Credenciais inválidas.' });
         }
-
-        /*const accessToken = jwt.sign({ id: user.id, username: user.username }, secretKey, {
-            expiresIn: '1h'
-        });*/
 
         const token = jwt.sign({ id: user.id }, secretKey, {
             expiresIn: '1h'
@@ -201,5 +173,5 @@ app.get('/plan', authenticateToken, async (req, res) => {
 
 initializeDatabase();
 
-const PORTA = 5000;
+const PORTA = process.env.PORT;
 app.listen(PORTA, () => console.log(`Auth service rodando na porta ${PORTA}`));
