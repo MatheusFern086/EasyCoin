@@ -29,9 +29,13 @@ const Home = ({ token }) => {
 
         const fetchCurrencies = async () => {
             try {
-                const response = await axios.get('https://api.exchangeratesapi.io/latest');
-                if (response.data && response.data.rates) {
-                    setCurrencies(Object.keys(response.data.rates));
+                const apiKey = 'e695db0faff3464aad5697e7dcf62364';
+                const response = await axios.get(`https://openexchangerates.org/api/currencies.json?app_id=${apiKey}`);
+                
+                console.log('Moedas recebidas:', response.data);
+    
+                if (response.data) {
+                    setCurrencies(Object.keys(response.data)); 
                 } else {
                     console.error('A resposta da API não contém os dados esperados.');
                 }
@@ -105,14 +109,22 @@ const Home = ({ token }) => {
                     className="input-field" 
                 />
 
-                <div className="converted-amount">
-                    {convertedAmount !== null && <p>Valor Convertido: {convertedAmount.toFixed(2)}</p>}
-                </div>
+                {convertedAmount !== null && (
+                    <div className="converted-amount">
+                        <label>Valor Convertido: {convertedAmount.toFixed(2)}</label>
+                    </div>
+                )}
 
                 <button onClick={handleConvert} className="convert-button">Converter</button>
                 <button onClick={handleLogout} className="convert-button">Sair</button>
 
-                {plan === 'Free' && <p> <Link to="/plano" className="plan-link" >Seja Pro e Converta ilimitadamente</Link></p>}
+                {plan === 'Free' && (
+                    <p>
+                        <Link to="/plano" className="plan-link">
+                            Seja Pro e Converta ilimitadamente
+                        </Link>
+                    </p>
+                )}
             </div>
         </div>
     );

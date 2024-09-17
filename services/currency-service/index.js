@@ -3,7 +3,9 @@ const axios = require('axios');
 require('dotenv').config();
 
 const app = express();
-const porta = 5002;
+const PORTA = process.env.PORT;
+
+const apiKey = process.env.OPEN_EXCHANGE_API_KEY ; 
 
 // Endpoint para converter moedas tradicionais
 app.get('/convert', async (req, res) => {
@@ -14,25 +16,29 @@ app.get('/convert', async (req, res) => {
     }
 
     try {
-        const response = await axios.get('https://api.coingecko.com/api/v3/simple/price', {
-            params: {
-                ids: from,
-                vs_currencies: to
+        const response = await axios.get(`https://openexchangerates.org/api/latest.json?app_id=${apiKey}`);
+        console.log('Resposta da API:', response.data); // Verifique o formato da resposta
+        if (response.data && response.data.rates) {
+            const rates = response.data.rates;
+            const rateFrom = rates[from.toUpperCase()];
+            const rateTo = rates[to.toUpperCase()];
+    
+            if (!rateFrom || !rateTo) {
+                return res.status(404).send('Moeda não encontrada.');
             }
-        });
-
-        if (response.data[from] && response.data[from][to]) {
-            const rate = response.data[from][to];
-            const convertedAmount = rate * amount;
-            res.json({ from, to, amount, convertedAmount, rate });
+    
+            const convertedAmount = (amount / rateFrom) * rateTo;
+            res.json({ from, to, amount, convertedAmount, rate: rateTo });
         } else {
-            res.status(404).send('Moeda não encontrada.');
+            console.error('A resposta da API não contém os dados esperados.');
+            res.status(500).send('Erro na resposta da API.');
         }
     } catch (error) {
+        console.error('Erro ao converter moeda:', error);
         res.status(500).send('Erro ao converter moeda.');
     }
 });
 
-app.listen(porta, () => {
-    console.log(`Currency service rodando na porta ${porta}`);
+app.listen(PORTA, () => {
+    console.log(`Currency service rodando na porta ${PORTA}`);
 });

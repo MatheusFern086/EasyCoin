@@ -16,14 +16,15 @@ const Login = ({ setToken }) => {
                 username,
                 password,
             });
-            const { token } = response.data; // Obtém o token do corpo da resposta
-            
+            const { token } = response.data;
+
             localStorage.setItem('token', token);
-            setToken(token);
-    
-            navigate('/home', token); 
+            setToken(token); // Atualiza o estado do token no App
+
+            navigate('/home');
         } catch (error) {
             console.error('Erro de login:', error);
+            alert('Credenciais inválidas.');
         }
     };
 
