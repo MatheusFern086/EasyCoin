@@ -95,7 +95,6 @@ app.post('/delete', async (req, res) => {
 //Rota de alteração de usuário
 app.post('/updateplan', async (req, res) => {
     const { id, plan } = req.body;
-    console.log('entrou');
     try {
         await sql.connect(config);
         const result = await sql.query`UPDATE Users SET fk_plano = ${plan} WHERE id = ${id}`;
