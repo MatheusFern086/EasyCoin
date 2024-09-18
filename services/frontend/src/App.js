@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-d
 import Login from './components/Login';
 import Home from './components/Home';
 import Register from './components/Register';
+import Plano from './components/Plano';
 
 function App() {
   const [token, setToken] = useState(null);
@@ -21,6 +22,10 @@ function App() {
         <Route 
           path="/register" 
           element={<Register />} 
+        />
+        <Route 
+          path="/plano" 
+          element={<Plano />} 
         />
         <Route 
           path="*" 

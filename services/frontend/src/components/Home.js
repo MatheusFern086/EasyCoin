@@ -32,8 +32,6 @@ const Home = ({ token }) => {
                 const apiKey = 'e695db0faff3464aad5697e7dcf62364';
                 const response = await axios.get(`https://openexchangerates.org/api/currencies.json?app_id=${apiKey}`);
                 
-                console.log('Moedas recebidas:', response.data);
-    
                 if (response.data) {
                     setCurrencies(Object.keys(response.data)); 
                 } else {
@@ -76,7 +74,6 @@ const Home = ({ token }) => {
         localStorage.removeItem('token');
         navigate('/login');
     };
-
     if (!plan) {
         return <div>Carregando...</div>;
     }

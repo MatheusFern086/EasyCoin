@@ -93,14 +93,13 @@ app.post('/delete', async (req, res) => {
 });
 
 //Rota de alteração de usuário
-app.post('/update', async (req, res) => {
-    const { id, username, password } = req.body;
-    const hashedPassword = await bcrypt.hash(password, 10);
-
+app.post('/updateplan', async (req, res) => {
+    const { id, plan } = req.body;
+    console.log('entrou');
     try {
         await sql.connect(config);
-        const result = await sql.query`UPDATE Users SET username = ${username}, password = ${password}, dt_alteracao = GETDATE() WHERE id = ${id}`;
-        res.status(201).send('Usuário alterado com sucesso');
+        const result = await sql.query`UPDATE Users SET fk_plano = ${plan} WHERE id = ${id}`;
+        res.status(201).send('Plano alterado com sucesso');
     } catch (err) {
         console.error('Database error:', err);
         res.status(500).send('Erro ao alterar usuário');
@@ -126,8 +125,8 @@ app.post('/login', async (req, res) => {
         const token = jwt.sign({ id: user.id }, secretKey, {
             expiresIn: '1h'
         });
-        res.json({ token })
-        //res.json({ accessToken });
+        console.log(user.id)
+        res.json({ token, userId: user.id });
     } catch (error) {
         console.error('Erro ao fazer login:', error);
         res.status(500).json({ message: 'Erro ao fazer login.' });

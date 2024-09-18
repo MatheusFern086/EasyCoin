@@ -17,10 +17,12 @@ const Login = ({ setToken }) => {
                 password,
             });
             const { token } = response.data;
+            const { userId } = response.data;
 
             localStorage.setItem('token', token);
+            localStorage.setItem('userId', userId);
             setToken(token); // Atualiza o estado do token no App
-
+            
             navigate('/home');
         } catch (error) {
             console.error('Erro de login:', error);
