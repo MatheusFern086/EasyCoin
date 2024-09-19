@@ -14,12 +14,11 @@ const Home = ({ token, setToken }) => {
     const [amount, setAmount] = useState('');
     const [convertedAmount, setConvertedAmount] = useState(null);
 
-    // Função para buscar o plano do usuário
     useEffect(() => {
         console.log('Token atual:', token);
         
         if (!token) {
-            navigate('/login');  // Redireciona para o login se não houver token
+            navigate('/login'); 
         } else {
             const fetchUserPlan = async () => {
                 try {
@@ -30,13 +29,13 @@ const Home = ({ token, setToken }) => {
                     setPlan(response.data.plan);
                 } catch (error) {
                     console.error('Erro ao buscar o plano do usuário:', error);
-                    setPlan('Free'); // Assume o plano "Free" caso haja erro
+                    setPlan('Free');
                 }
             };
 
             const fetchCurrencies = async () => {
                 try {
-                    const apiKey = 'e695db0faff3464aad5697e7dcf62364'; // Sua API key
+                    const apiKey = 'e695db0faff3464aad5697e7dcf62364'; 
                     const response = await axios.get(`https://openexchangerates.org/api/currencies.json?app_id=${apiKey}`);
                     
                     if (response.data) {
@@ -68,7 +67,6 @@ const Home = ({ token, setToken }) => {
         }
     }, [token, navigate]);
 
-    // Função para converter moedas
     const handleConvert = async () => {
         try {
             const response = await axios.get(`https://api.exchangeratesapi.io/latest?base=${selectedCurrency}`);
@@ -79,11 +77,10 @@ const Home = ({ token, setToken }) => {
         }
     };
 
-    // Função para logout
     const handleLogout = () => {
-        localStorage.removeItem('token');  // Remove o token do localStorage
-        setToken(null);                    // Atualiza o estado do token
-        navigate('/login', { replace: true });  // Redireciona para a tela de login
+        localStorage.removeItem('token');
+        setToken(null);                  
+        navigate('/login', { replace: true });
     };
 
     if (!plan) {
