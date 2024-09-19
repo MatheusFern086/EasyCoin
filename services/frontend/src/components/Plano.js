@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import './Plano.css';
 import { useNavigate } from 'react-router-dom';
-import logo from '../assets/EasyCoinN.png'; // Certifique-se de ajustar o caminho
+import logo from '../assets/EasyCoinN.png';
 
 const Plano = () => {
     const [selectedPlan, setSelectedPlan] = useState('Pro');
@@ -14,7 +14,7 @@ const Plano = () => {
     const handleSelect = async () => {
         const userId = localStorage.getItem('userId'); 
         const token = localStorage.getItem('token'); 
-        
+
         try {
             const response = await fetch('http://localhost:5000/updateplan', {
                 method: 'POST',
@@ -30,7 +30,7 @@ const Plano = () => {
 
             if (response.ok) {
                 alert(`Plano ${selectedPlan} selecionado com sucesso!`);
-                navigate('/home'); // Redireciona para a página inicial após a seleção do plano
+                navigate('/home'); 
             } else {
                 alert('Erro ao selecionar o plano. Tente novamente.');
             }

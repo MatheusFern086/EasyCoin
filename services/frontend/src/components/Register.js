@@ -7,7 +7,7 @@ import logo from '../assets/EasyCoinN.png';
 const Register = () => {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
-    const navigate = useNavigate();  // Inicialize o hook useNavigate
+    const navigate = useNavigate();
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -17,7 +17,7 @@ const Register = () => {
                 password,
             });
             alert('Registrado com sucesso');
-            navigate('/login');  // Navega para a tela de login
+            navigate('/login');
         } catch (error) {
             console.error('Erro ao registrar usuário', error);
             alert('Erro ao Registrar');
@@ -25,7 +25,7 @@ const Register = () => {
     };
 
     const handleBack = () => {
-        navigate('/login');  // Navega para a tela de login ao clicar no botão "Voltar"
+        navigate('/login');
     };
 
     return (

@@ -21,8 +21,8 @@ const Login = ({ setToken }) => {
 
             localStorage.setItem('token', token);
             localStorage.setItem('userId', userId);
-            setToken(token); // Atualiza o estado do token no App
-            
+            setToken(token); 
+
             navigate('/home');
         } catch (error) {
             console.error('Erro de login:', error);
