@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import axios from 'axios';
-import { useNavigate } from 'react-router-dom';  // Importe o hook useNavigate
+import { useNavigate } from 'react-router-dom';
 import './Register.css';
 import logo from '../assets/EasyCoinN.png';
 

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import './Home.css';
+import './Home.css'; 
 import logo from '../assets/EasyCoinN.png';
 import { Link, useNavigate } from 'react-router-dom';
 
@@ -13,6 +13,7 @@ const Home = ({ token, setToken }) => {
     const [selectedCrypto, setSelectedCrypto] = useState('');
     const [amount, setAmount] = useState('');
     const [convertedAmount, setConvertedAmount] = useState(null);
+    const [conversionType, setConversionType] = useState('moeda'); 
 
     useEffect(() => {
         console.log('Token atual:', token);
@@ -69,8 +70,14 @@ const Home = ({ token, setToken }) => {
 
     const handleConvert = async () => {
         try {
-            const response = await axios.get(`https://api.exchangeratesapi.io/latest?base=${selectedCurrency}`);
-            const rate = response.data.rates[selectedCrypto.toUpperCase()];
+            let rate;
+            if (conversionType === 'moeda') {
+                const response = await axios.get(`https://api.exchangeratesapi.io/latest?base=${selectedCurrency}`);
+                rate = response.data.rates[selectedCrypto.toUpperCase()];
+            } else if (conversionType === 'cripto') {
+                const response = await axios.get(`https://api.coingecko.com/api/v3/simple/price?ids=${selectedCrypto}&vs_currencies=usd`);
+                rate = response.data[selectedCrypto].usd;
+            }
             setConvertedAmount(rate * amount);
         } catch (error) {
             console.error('Erro ao converter:', error);
@@ -79,7 +86,7 @@ const Home = ({ token, setToken }) => {
 
     const handleLogout = () => {
         localStorage.removeItem('token');
-        setToken(null);                  
+        setToken(null);                   
         navigate('/login', { replace: true });
     };
 
@@ -94,29 +101,56 @@ const Home = ({ token, setToken }) => {
                 <h1>Conversor de Moedas</h1>
                 <p>Conversões restantes: {plan === 'Free' ? '3' : '∞'}</p>
 
-                <select 
-                    onChange={(e) => setSelectedCurrency(e.target.value)} 
-                    className="input-field"
-                >
-                    <option value="">Selecione uma Moeda</option>
-                    {currencies.map((currency) => (
-                        <option key={currency} value={currency}>
-                            {currency}
-                        </option>
-                    ))}
-                </select>
+                <div className="conversion-type">
+                    <label className="radio-label">
+                        <input 
+                            type="radio" 
+                            value="moeda" 
+                            checked={conversionType === 'moeda'} 
+                            onChange={() => setConversionType('moeda')} 
+                            className="radio-input"
+                        />
+                        Moedas Físicas
+                    </label>
+                    <label className="radio-label">
+                        <input 
+                            type="radio" 
+                            value="cripto" 
+                            checked={conversionType === 'cripto'} 
+                            onChange={() => setConversionType('cripto')} 
+                            className="radio-input"
+                        />
+                        Criptomoedas
+                    </label>
+                </div>
 
-                <select 
-                    onChange={(e) => setSelectedCrypto(e.target.value)} 
-                    className="input-field"
-                >
-                    <option value="">Selecione uma Cryptomoeda</option>
-                    {cryptoCurrencies.map((crypto) => (
-                        <option key={crypto} value={crypto}>
-                            {crypto}
-                        </option>
-                    ))}
-                </select>
+                {conversionType === 'moeda' && (
+                    <select 
+                        onChange={(e) => setSelectedCurrency(e.target.value)} 
+                        className="input-field dropdown-fixed"
+                    >
+                        <option value="">Selecione uma Moeda</option>
+                        {currencies.map((currency) => (
+                            <option key={currency} value={currency}>
+                                {currency}
+                            </option>
+                        ))}
+                    </select>
+                )}
+
+                {conversionType === 'cripto' && (
+                    <select 
+                        onChange={(e) => setSelectedCrypto(e.target.value)} 
+                        className="input-field dropdown-fixed"
+                    >
+                        <option value="">Selecione uma Criptomoeda</option>
+                        {cryptoCurrencies.map((crypto) => (
+                            <option key={crypto} value={crypto}>
+                                {crypto}
+                            </option>
+                        ))}
+                    </select>
+                )}
 
                 <input 
                     type="number" 

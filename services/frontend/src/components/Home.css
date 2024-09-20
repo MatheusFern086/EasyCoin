@@ -15,6 +15,30 @@
     margin-top: 110px;
 }
 
+.radio-label {
+    color: white;
+    font-size: 16px;
+    margin-right: 20px;
+    display: inline-block;
+}
+
+.radio-input {
+    margin-right: 10px;
+    accent-color: black;
+}
+
+.dropdown-fixed {
+    width: 250px;
+    height: 40px;
+    font-size: 16px;
+    padding: 5px;
+    margin: 10px 0;
+    background-color: #000;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    box-sizing: border-box; /* Mantém o tamanho fixo */
+}
 
 .plan-link {
     color: #ff5722;
@@ -40,7 +64,7 @@ p {
 }
 
 .input-field {
-    width: 100%;
+    width: 250px;
     padding: 10px;
     margin: 10px 0;
     border-radius: 5px;
@@ -48,6 +72,7 @@ p {
     background-color: #000;
     color: white;
     font-size: 16px;
+    box-sizing: border-box;
 }
 
 .converted-amount {
@@ -57,7 +82,7 @@ p {
 }
 
 .convert-button {
-    width: 82%;
+    width: 250px;
     padding: 10px;
     margin-top: 20px;
     border: none;
@@ -66,6 +91,27 @@ p {
     color: white;
     font-size: 16px;
     cursor: pointer;
+    margin-right: 10px;
     transition: background-color 0.3s;
 }
 
+.convert-button:hover {
+    background-color: #e64a19;
+}
+
+.logout-button {
+    width: 250px; 
+    padding: 10px;
+    margin-top: 20px;
+    border: none;
+    border-radius: 5px;
+    background-color: #000;
+    color: white;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.logout-button:hover {
+    background-color: #333;
+}
