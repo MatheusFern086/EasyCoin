@@ -40,7 +40,8 @@ const Home = ({ token, setToken }) => {
                     const response = await axios.get(`https://openexchangerates.org/api/currencies.json?app_id=${apiKey}`);
                     
                     if (response.data) {
-                        setCurrencies(Object.keys(response.data)); 
+                        const currencyArray = Object.entries(response.data); 
+                        setCurrencies(currencyArray); // Agora você tem um array com siglas e nomes
                     } else {
                         console.error('A resposta da API não contém os dados esperados.');
                     }
@@ -130,9 +131,9 @@ const Home = ({ token, setToken }) => {
                         className="input-field dropdown-fixed"
                     >
                         <option value="">Selecione uma Moeda</option>
-                        {currencies.map((currency) => (
-                            <option key={currency} value={currency}>
-                                {currency}
+                        {currencies.map(([code, name]) => (
+                            <option key={code} value={code}>
+                                {code} - {name}
                             </option>
                         ))}
                     </select>
