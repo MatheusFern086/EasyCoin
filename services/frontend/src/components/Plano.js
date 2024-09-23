@@ -55,6 +55,7 @@ const Plano = () => {
                         type="radio" 
                         name="plan" 
                         value="Free" 
+                        className="radio-input"
                         checked={selectedPlan === 'Free'}
                         onChange={handlePlanSelection} 
                     />
@@ -65,6 +66,7 @@ const Plano = () => {
                         type="radio" 
                         name="plan" 
                         value="Pro" 
+                        className="radio-input"
                         checked={selectedPlan === 'Pro'}
                         onChange={handlePlanSelection} 
                     />

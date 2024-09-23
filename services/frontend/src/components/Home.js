@@ -14,7 +14,7 @@ const Home = ({ token, setToken }) => {
     const [amount, setAmount] = useState('');
     const [convertedAmount, setConvertedAmount] = useState(null);
     const [conversionType, setConversionType] = useState('moeda'); 
-
+    
     useEffect(() => {
         console.log('Token atual:', token);
         
