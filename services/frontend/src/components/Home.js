@@ -41,7 +41,7 @@ const Home = ({ token, setToken }) => {
                     
                     if (response.data) {
                         const currencyArray = Object.entries(response.data); 
-                        setCurrencies(currencyArray); // Agora você tem um array com siglas e nomes
+                        setCurrencies(currencyArray); 
                     } else {
                         console.error('A resposta da API não contém os dados esperados.');
                     }
@@ -70,18 +70,39 @@ const Home = ({ token, setToken }) => {
     }, [token, navigate]);
 
     const handleConvert = async () => {
+        if (!amount || isNaN(amount) || amount <= 0) {
+            alert("Por favor, insira um valor válido para converter.");
+            return;
+        }
+
         try {
-            let rate;
+            let response, rate;
+
             if (conversionType === 'moeda') {
-                const response = await axios.get(`https://api.exchangeratesapi.io/latest?base=${selectedCurrency}`);
-                rate = response.data.rates[selectedCrypto.toUpperCase()];
+                response = await axios.get('http://localhost:5002/convert', {
+                    params: {
+                        from: selectedCurrency,
+                        to: 'USD',
+                        amount
+                    }
+                });
+                rate = response.data.rate;
             } else if (conversionType === 'cripto') {
-                const response = await axios.get(`https://api.coingecko.com/api/v3/simple/price?ids=${selectedCrypto}&vs_currencies=usd`);
-                rate = response.data[selectedCrypto].usd;
+                response = await axios.get('http://localhost:5001/convert', {
+                    params: {
+                        from: selectedCrypto,
+                        to: 'usd',
+                        amount
+                    }
+                });
+                rate = response.data.rate;
             }
-            setConvertedAmount(rate * amount);
+
+            const convertedAmount = response.data.convertedAmount;
+            setConvertedAmount(convertedAmount);
         } catch (error) {
             console.error('Erro ao converter:', error);
+            alert('Erro ao realizar a conversão. Tente novamente mais tarde.');
         }
     };
 
