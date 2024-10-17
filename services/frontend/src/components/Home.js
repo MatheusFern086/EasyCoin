@@ -16,7 +16,6 @@ const Home = ({ token, setToken }) => {
     const [conversionType, setConversionType] = useState('moeda'); 
     
     useEffect(() => {
-        console.log('Token atual:', token);
         
         if (!token) {
             navigate('/login'); 
@@ -26,7 +25,6 @@ const Home = ({ token, setToken }) => {
                     const response = await axios.get('http://localhost:5000/plan', {
                         headers: { Authorization: `Bearer ${token}` }
                     });
-                    console.log('Plano do usuário:', response.data.plan);
                     setPlan(response.data.plan);
                 } catch (error) {
                     console.error('Erro ao buscar o plano do usuário:', error);
@@ -184,7 +182,7 @@ const Home = ({ token, setToken }) => {
 
                 {convertedAmount !== null && (
                     <div className="converted-amount">
-                        <label>Valor Convertido: {convertedAmount.toFixed(2)}</label>
+                        <label>Valor Convertido em Dólar: {convertedAmount.toFixed(2)}</label>
                     </div>
                 )}
 
