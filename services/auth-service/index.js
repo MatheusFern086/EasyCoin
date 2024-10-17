@@ -24,7 +24,7 @@ const config = {
     }
 };
 
-const initializeDatabase = async () => {
+/*const initializeDatabase = async () => {
     try {
         const pool = await sql.connect(config);
 
@@ -47,7 +47,7 @@ const initializeDatabase = async () => {
     } catch (err) {
         console.error('Erro ao inicializar o banco de dados:', err);
     }
-};
+};*/
 
 // Middleware para autenticação de token JWT
 const authenticateToken = (req, res, next) => {
@@ -169,7 +169,7 @@ app.get('/plan', authenticateToken, async (req, res) => {
     }
 });
 
-initializeDatabase();
+//initializeDatabase();
 
 const PORTA = process.env.PORT;
 app.listen(PORTA, () => console.log(`Auth service rodando na porta ${PORTA}`));
