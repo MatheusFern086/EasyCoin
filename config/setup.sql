@@ -24,7 +24,8 @@ BEGIN
         password NVARCHAR(255) NOT NULL,
         fk_plano INT DEFAULT 1,
         dt_inclusao DATETIME NOT NULL DEFAULT GETDATE(),
-        dt_alteracao DATETIME NOT NULL DEFAULT GETDATE()
+        dt_alteracao DATETIME NOT NULL DEFAULT GETDATE(),
+        qtd_conversao INT DEFAULT 3
     );
 
     ALTER TABLE Users ADD CONSTRAINT FK_Users_Planos

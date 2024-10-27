@@ -14,6 +14,7 @@ const Home = ({ token, setToken }) => {
     const [amount, setAmount] = useState('');
     const [convertedAmount, setConvertedAmount] = useState(null);
     const [conversionType, setConversionType] = useState('moeda'); 
+    const [qtdConversoes, setQtdConversoes] = useState(null);
     
     useEffect(() => {
         
@@ -26,9 +27,11 @@ const Home = ({ token, setToken }) => {
                         headers: { Authorization: `Bearer ${token}` }
                     });
                     setPlan(response.data.plan);
+                    setQtdConversoes(response.data.qtdConversoes);
                 } catch (error) {
                     console.error('Erro ao buscar o plano do usuário:', error);
                     setPlan('Free');
+                    setQtdConversoes(3);
                 }
             };
 
@@ -73,6 +76,11 @@ const Home = ({ token, setToken }) => {
             return;
         }
 
+        if(qtdConversoes === 0 && plan === 'Free'){
+            alert("Total de conversões atingido! Adquira o plano Pro e tenha conversões ilimitadas");
+            return;
+        }
+
         try {
             let response, rate;
 
@@ -98,6 +106,11 @@ const Home = ({ token, setToken }) => {
 
             const convertedAmount = response.data.convertedAmount;
             setConvertedAmount(convertedAmount);
+
+            if (plan === 'Free') {
+                await axios.put('http://localhost:5000/updateConversions', { token });
+                setQtdConversoes(prev => prev - 1);
+            }
         } catch (error) {
             console.error('Erro ao converter:', error);
             alert('Erro ao realizar a conversão. Tente novamente mais tarde.');
@@ -119,7 +132,7 @@ const Home = ({ token, setToken }) => {
             <div>
                 <img src={logo} alt="EasyCoin Logo" className="logo" />
                 <h1>Conversor de Moedas</h1>
-                <p>Conversões restantes: {plan === 'Free' ? '3' : '∞'}</p>
+                <p>Conversões restantes: {plan === 'Free' ? qtdConversoes : '∞'}</p>
 
                 <div className="conversion-type">
                     <label className="radio-label">

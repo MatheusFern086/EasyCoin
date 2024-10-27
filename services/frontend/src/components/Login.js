@@ -37,7 +37,7 @@ const Login = ({ setToken }) => {
                 <h1>Login</h1>
                 <input
                     type="text"
-                    placeholder="Usuário"
+                    placeholder="E-mail"
                     value={username}
                     onChange={(e) => setUsername(e.target.value)}
                     className="input-field"

@@ -35,7 +35,7 @@ const Register = () => {
             <form onSubmit={handleSubmit}>
                 <input
                     type="text"
-                    placeholder="Usuário"
+                    placeholder="E-mail"
                     value={username}
                     onChange={(e) => setUsername(e.target.value)}
                     className="input-field"

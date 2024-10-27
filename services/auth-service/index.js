@@ -24,31 +24,6 @@ const config = {
     }
 };
 
-/*const initializeDatabase = async () => {
-    try {
-        const pool = await sql.connect(config);
-
-        const result = await pool.request().query(`
-            IF NOT EXISTS (SELECT name FROM sys.databases WHERE name = 'ProjetoTopicos')
-            BEGIN
-                CREATE DATABASE ProjetoTopicos;
-            END
-        `);
-        console.log('Banco de dados verificado/criado com sucesso.');
-
-        await sql.connect({ ...config, database: 'ProjetoTopicos' });
-        
-        const scriptPath = path.join(__dirname, 'setup.sql');
-        const script = fs.readFileSync(scriptPath, 'utf8');
-
-        await pool.request().query(script);
-        console.log('Tabelas criadas com sucesso.');
-        
-    } catch (err) {
-        console.error('Erro ao inicializar o banco de dados:', err);
-    }
-};*/
-
 // Middleware para autenticação de token JWT
 const authenticateToken = (req, res, next) => {
     const authHeader = req.headers['authorization']; // Alterado para minúsculas
@@ -153,13 +128,15 @@ app.get('/plan', authenticateToken, async (req, res) => {
         const result = await pool.request()
             .input('userId', sql.Int, userId)
             .query(`
-                SELECT p.nome_plano FROM Users u
+                SELECT p.nome_plano, u.qtd_conversao
+                FROM Users u
                 JOIN Planos p ON u.fk_plano = p.id_plano
                 WHERE u.id = @userId
             `);
 
         if (result.recordset.length > 0) {
-            res.json({ plan: result.recordset[0].nome_plano });
+            const { nome_plano, qtd_conversao } = result.recordset[0];
+            res.json({ plan: nome_plano, qtdConversoes: qtd_conversao });
         } else {
             res.status(404).json({ message: 'Plano não encontrado' });
         }
@@ -169,7 +146,23 @@ app.get('/plan', authenticateToken, async (req, res) => {
     }
 });
 
-//initializeDatabase();
+
+app.put('/updateConversions', async (req, res) => {
+    const { token } = req.body;
+    try {
+        const decoded = jwt.verify(token, secretKey);
+        const userId = decoded.userId;
+
+        console.log()
+
+        await sql.query`UPDATE Users SET qtd_conversao = qtd_conversao - 1 WHERE id = ${userId} AND qtd_conversao > 0`;
+
+        res.status(200).send({ message: 'Contador de conversões atualizado.' });
+    } catch (error) {
+        console.error('Erro ao atualizar as conversões:', error);
+        res.status(500).send({ message: 'Erro ao atualizar as conversões.' });
+    }
+});
 
 const PORTA = process.env.PORT;
 app.listen(PORTA, () => console.log(`Auth service rodando na porta ${PORTA}`));
