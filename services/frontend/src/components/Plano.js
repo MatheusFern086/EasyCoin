@@ -15,24 +15,34 @@ const Plano = () => {
         const userId = localStorage.getItem('userId'); 
         const token = localStorage.getItem('token'); 
 
-        try {
-            const response = await fetch('http://localhost:5000/updateplan', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${token}`
-                },
-                body: JSON.stringify({
-                    id: userId,
-                    plan: selectedPlan === 'Free' ? 1 : 2
-                })
-            });
+        // Verifica o plano atual do usuário
+        const currentPlan = localStorage.getItem('currentPlan'); 
 
-            if (response.ok) {
-                alert(`Plano ${selectedPlan} selecionado com sucesso!`);
-                navigate('/home'); 
+        try {
+            if (currentPlan === 'Free' && selectedPlan === 'Pro') {
+                navigate('/formapagamento');
             } else {
-                alert('Erro ao selecionar o plano. Tente novamente.');
+                // Caso contrário, atualiza o plano diretamente
+                const response = await fetch('http://localhost:5000/updateplan', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({
+                        id: userId,
+                        plan: selectedPlan === 'Free' ? 1 : 2
+                    })
+                });
+
+                if (response.ok) {
+                    alert(`Plano ${selectedPlan} selecionado com sucesso!`);
+                    // Atualiza o plano atual armazenado localmente
+                    localStorage.setItem('currentPlan', selectedPlan);
+                    navigate('/home'); 
+                } else {
+                    alert('Erro ao selecionar o plano. Tente novamente.');
+                }
             }
         } catch (error) {
             console.error('Erro ao atualizar o plano:', error);

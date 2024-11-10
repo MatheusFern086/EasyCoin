@@ -4,6 +4,7 @@ import Login from './components/Login';
 import Home from './components/Home';
 import Register from './components/Register';
 import Plano from './components/Plano';
+import FormaPagamento from './components/FormaPagamento';
 
 function App() {
   const [token, setToken] = useState(localStorage.getItem('token'));
@@ -34,6 +35,10 @@ function App() {
         <Route 
           path="/plano" 
           element={<Plano />} 
+        />
+        <Route 
+          path="/formaPagamento" 
+          element={<FormaPagamento />} 
         />
         <Route 
           path="*" 
