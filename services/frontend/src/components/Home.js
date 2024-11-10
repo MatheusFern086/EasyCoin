@@ -3,6 +3,7 @@ import axios from 'axios';
 import './Home.css'; 
 import logo from '../assets/EasyCoinN.png';
 import { Link, useNavigate } from 'react-router-dom';
+import Modal from './Modal';
 
 const Home = ({ token, setToken }) => {
     const navigate = useNavigate();
@@ -15,6 +16,8 @@ const Home = ({ token, setToken }) => {
     const [convertedAmount, setConvertedAmount] = useState(null);
     const [conversionType, setConversionType] = useState('moeda'); 
     const [qtdConversoes, setQtdConversoes] = useState(null);
+    const [showModal, setShowModal] = useState(false);
+    const [modalMessage, setModalMessage] = useState('');
     
     useEffect(() => {
         
@@ -72,12 +75,14 @@ const Home = ({ token, setToken }) => {
 
     const handleConvert = async () => {
         if (!amount || isNaN(amount) || amount <= 0) {
-            alert("Por favor, insira um valor válido para converter.");
+            setModalMessage("Por favor, insira um valor válido para converter.");
+            setShowModal(true);
             return;
         }
 
         if(qtdConversoes === 0 && plan === 'Free'){
-            alert("Total de conversões atingido! Adquira o plano Pro e tenha conversões ilimitadas");
+            setModalMessage("Total de conversões atingido! Adquira o plano Pro e tenha conversões ilimitadas.");
+            setShowModal(true);
             return;
         }
 
@@ -113,7 +118,9 @@ const Home = ({ token, setToken }) => {
             }
         } catch (error) {
             console.error('Erro ao converter:', error);
-            alert('Erro ao realizar a conversão. Tente novamente mais tarde.');
+            setModalMessage("Erro ao realizar a conversão. Tente novamente mais tarde.");
+            setShowModal(true);
+            return;
         }
     };
 
@@ -129,6 +136,7 @@ const Home = ({ token, setToken }) => {
 
     return (
         <div className="home-container">
+            <Modal show={showModal} message={modalMessage} onClose={() => setShowModal(false)} />
             <div>
                 <img src={logo} alt="EasyCoin Logo" className="logo" />
                 <h1>Conversor de Moedas</h1>

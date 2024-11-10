@@ -2,10 +2,14 @@ import React, { useState } from 'react';
 import './FormaPagamento.css';
 import logo from '../assets/EasyCoinN.png';
 import { useNavigate } from 'react-router-dom';
+import Modal from './Modal';
 
 const FormaPagamento = () => {
     const navigate = useNavigate();
     const [selectedPaymentMethod, setSelectedPaymentMethod] = useState('Pix');
+    const [showModal, setShowModal] = useState(false);
+    const [modalMessage, setModalMessage] = useState('');
+    const [redirectAfterModal, setRedirectAfterModal] = useState(false);
 
     const handlePaymentMethodChange = (event) => {
         setSelectedPaymentMethod(event.target.value);
@@ -24,20 +28,23 @@ const FormaPagamento = () => {
                 },
                 body: JSON.stringify({
                     id: userId,
-                    plan: 2 // Código para o plano Pro
+                    plan: 2 
                 })
             });
 
             if (response.ok) {
-                alert(`Plano Pro ativado com sucesso! Forma de pagamento: ${selectedPaymentMethod}`);
-                localStorage.setItem('currentPlan', 'Pro'); // Atualiza o plano atual no localStorage
-                navigate('/home'); // Redireciona para a tela Home
+                setModalMessage(`Plano Pro ativado com sucesso! Forma de pagamento: ${selectedPaymentMethod}`);
+                setShowModal(true);
+                setRedirectAfterModal(true); 
+                localStorage.setItem('currentPlan', 'Pro'); 
             } else {
-                alert('Erro ao ativar o plano Pro. Tente novamente.');
+                setModalMessage("Erro ao ativar o plano Pro. Tente novamente.");
+                setShowModal(true);
             }
         } catch (error) {
             console.error('Erro ao atualizar o plano:', error);
-            alert('Erro ao atualizar o plano. Tente novamente mais tarde.');
+            setModalMessage("Erro ao atualizar o plano. Tente novamente mais tarde.");
+            setShowModal(true);
         }
     };
 
@@ -45,8 +52,16 @@ const FormaPagamento = () => {
         navigate('/plano');
     };
 
+    const handleCloseModal = () => {
+        setShowModal(false);
+        if (redirectAfterModal) {
+            navigate('/home');
+        }
+    };
+
     return (
         <div className="payment-container">
+            <Modal show={showModal} message={modalMessage} onClose={handleCloseModal} />
             <img src={logo} alt="EasyCoin Logo" className="logo" />
             <h2>Pagamento</h2>
             <div className="payment-amount">Valor: R$20,00 mensais</div>

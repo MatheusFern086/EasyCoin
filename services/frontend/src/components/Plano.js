@@ -1,11 +1,15 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import './Plano.css';
 import { useNavigate } from 'react-router-dom';
 import logo from '../assets/EasyCoinN.png';
+import Modal from './Modal';
 
 const Plano = () => {
     const [selectedPlan, setSelectedPlan] = useState('Pro');
     const navigate = useNavigate();
+    const [modalMessage, setModalMessage] = useState('');
+    const [redirectAfterModal, setRedirectAfterModal] = useState(false);
+    const [showModal, setShowModal] = useState(false);
 
     const handlePlanSelection = (e) => {
         setSelectedPlan(e.target.value);
@@ -36,17 +40,21 @@ const Plano = () => {
                 });
 
                 if (response.ok) {
-                    alert(`Plano ${selectedPlan} selecionado com sucesso!`);
+                    setModalMessage(`Plano ${selectedPlan} selecionado com sucesso!`);
+                    setShowModal(true);
+                    setRedirectAfterModal(true);
+
                     // Atualiza o plano atual armazenado localmente
                     localStorage.setItem('currentPlan', selectedPlan);
-                    navigate('/home'); 
                 } else {
-                    alert('Erro ao selecionar o plano. Tente novamente.');
+                    setModalMessage('Erro ao selecionar o plano. Tente novamente.');
+                    setShowModal(true);
                 }
             }
         } catch (error) {
             console.error('Erro ao atualizar o plano:', error);
-            alert('Erro ao atualizar o plano. Tente novamente mais tarde.');
+            setModalMessage('Erro ao atualizar o plano. Tente novamente mais tarde.');
+            setShowModal(true);
         }
     };
 
@@ -54,8 +62,19 @@ const Plano = () => {
         navigate('/home');
     };
 
+    useEffect(() => {
+        if (showModal && redirectAfterModal) {
+            const timer = setTimeout(() => {
+                navigate('/home');
+            }, 2000); 
+
+            return () => clearTimeout(timer); 
+        }
+    }, [showModal, redirectAfterModal, navigate]);
+
     return (
         <div className="plano-container">
+            <Modal show={showModal} message={modalMessage} onClose={() => setShowModal(false)} />
             <img src={logo} alt="EasyCoin Logo" className="plano-logo" />
             <h1>Selecione seu plano</h1>
 
